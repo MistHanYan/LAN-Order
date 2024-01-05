@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.lanorderafterend.entity.DeskMsg;
 import com.example.lanorderafterend.entity.Marketing;
 import com.example.lanorderafterend.entity.Order;
-import com.example.lanorderafterend.entity.Store;
 import com.example.lanorderafterend.service.Admin;
 import com.example.lanorderafterend.util.mybatis.TabMarketingCode;
 import com.example.lanorderafterend.util.mybatis.TabOrder;
@@ -23,11 +22,14 @@ import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+
+import static com.example.lanorderafterend.util.tools.SaveImg.saveImg;
 
 @Service
 public class AdminServer implements Admin {
@@ -94,9 +96,9 @@ public class AdminServer implements Admin {
      * 更新数据库中商品销量
      * */
     private void recordSalas(Order order){
-        for (Store s : order.getStoreList()){
+        for (TabStore s : order.getStoreList()){
             TabStore stored = storeMapper.selectById(s.getId());
-            stored.setNumber(stored.getNumber()+s.getNum());
+            stored.setNumber(stored.getNumber()+s.getNumber());
             storeMapper.updateById(stored);
         }
     }
@@ -105,9 +107,20 @@ public class AdminServer implements Admin {
      * 添加新商品到数据库
      * */
     @Override
-    public int addStore(TabStore tabStore) {
+    public int addStore(TabStore tabStore , String imgName , MultipartFile img) {
+        // 设置添加时间
         tabStore.setCreatedDate(LocalDateTime.now());
+        // 初始化折扣
         tabStore.setDiscount(1.0);
+        // 保存图片
+        String imgSavedPath = saveImg(img.getOriginalFilename(), img);
+        if (imgSavedPath.equals("")) {
+            return -1;
+        }
+        // 初始化销售数量
+        tabStore.setNumber(0);
+        // 设置图片地址
+        tabStore.setImgPath(imgSavedPath);
         return storeMapper.insert(tabStore);
     }
 
@@ -148,12 +161,12 @@ public class AdminServer implements Admin {
      * 将数据库中获取到的商品设置需要销售的数量
      * 添加到redis*/
     @Override
-    public int sellout(List<Store> storeList) {
+    public int sellout(List<TabStore> storeList) {
         // 更新前删除redis中的所有商品
         sellOutRepository.deleteStoreData();
         logger.debug("sellOut init");
         // 添加到redis
-        for (Store store : storeList){
+        for (TabStore store : storeList){
             sellOutRepository.putStore(store);
             logger.info("save store : {}",store);
         }
@@ -230,15 +243,19 @@ public class AdminServer implements Admin {
      * */
     @Override
     public String getMarketingQR(Marketing marketing) throws IOException {
-        TabMarketingCode tabMarketingCode = new TabMarketingCode();
-        tabMarketingCode.setCode(QR.generateRandomString());
-        tabMarketingCode.setType(marketing.getType());
-        tabMarketingCode.setMaxValue(marketing.getMax_out().get(0).getMax());
-        tabMarketingCode.setOutValue(marketing.getMax_out().get(0).getOut());
-        tabMarketingCode.setTypeDiscount(marketing.getDiscount());
-        // 如果优惠方案添加到数据库成功将生成优惠码
-        if(codeMapper.insert(tabMarketingCode) == 1){
-            return new QR().getDiscountCode(marketing);
+        if(marketing.getType().equals("001") || marketing.getType().equals("002") || marketing.getType().equals("003")){
+            TabMarketingCode tabMarketingCode = new TabMarketingCode();
+            tabMarketingCode.setCode(QR.generateRandomString());
+            tabMarketingCode.setType(marketing.getType());
+            tabMarketingCode.setMaxValue(marketing.getMax_out().get(0).getMax());
+            tabMarketingCode.setOutValue(marketing.getMax_out().get(0).getOut());
+            tabMarketingCode.setTypeDiscount(marketing.getDiscount());
+            // 如果优惠方案添加到数据库成功将生成优惠码
+            if(codeMapper.insert(tabMarketingCode) == 1){
+                return new QR().getDiscountCode(marketing);
+            }else {
+                return "";
+            }
         }else {
             return "";
         }

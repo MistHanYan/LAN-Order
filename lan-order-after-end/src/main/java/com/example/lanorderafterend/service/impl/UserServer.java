@@ -2,9 +2,9 @@ package com.example.lanorderafterend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.lanorderafterend.entity.Order;
-import com.example.lanorderafterend.entity.Store;
 import com.example.lanorderafterend.service.User;
 import com.example.lanorderafterend.util.mybatis.TabMarketingCode;
+import com.example.lanorderafterend.util.mybatis.TabStore;
 import com.example.lanorderafterend.util.mybatis.mapper.MarketingCodeMapper;
 import com.example.lanorderafterend.util.redis.SellOutRepository;
 import com.example.lanorderafterend.util.redis.TemporarilyOrder;
@@ -56,11 +56,11 @@ public class UserServer implements User {
                 order.getTabNum())) == null){
             // 核算商品总价
             order.setTotal(taximeter(order));
-            for (Store s : order.getStoreList()) {
+            for (TabStore s : order.getStoreList()) {
                 // 如果库存存充足将扣掉在售商品库存
                 if(updateStoreNumById(String.valueOf(
                         s.getId()),
-                        s.getNum()) == 1){
+                        s.getNumber()) == 1){
                     // 库存够，更新完商品更新订单
                     temporarilyOrder.putOrder(order);
                 }else {
@@ -98,25 +98,25 @@ public class UserServer implements User {
     @Synchronized
     private int goAdd(Order order) {
         // 取出redis中原始订单
-        List<Store> storeListed = temporarilyOrder.findOrderById(
+        List<TabStore> storeListed = temporarilyOrder.findOrderById(
                 String.valueOf(order.getTabNum())).getStoreList();
 
         // 用来保存新订单和原始订单重组后的订单
-        List<Store> finalOrder = new ArrayList<>();
+        List<TabStore> finalOrder = new ArrayList<>();
 
         // 取出新订单
-        List<Store> newStoreList = order.getStoreList();
-        for (Store s : newStoreList) {
+        List<TabStore> newStoreList = order.getStoreList();
+        for (TabStore s : newStoreList) {
             boolean found = false;
-            for (Store t : storeListed) {
+            for (TabStore t : storeListed) {
                 // 如果新订单商品在原始订单中存在并且修改在售商品数量成功
                 // 将修改原始订单中商品数量
                 if (s.getId() == t.getId()
                         && updateStoreNumById(
                         String.valueOf(s.getId()),
-                        s.getNum()) == 1) {
+                        s.getNumber()) == 1) {
                     // 更新订单商品数
-                    t.setNum(s.getNum() + t.getNum());
+                    t.setNumber(s.getNumber() + t.getNumber());
                     finalOrder.add(t);
                     found = true;
                     break;
@@ -126,7 +126,7 @@ public class UserServer implements User {
             if (!found) {
                 if (updateStoreNumById(String.valueOf(
                         s.getId()),
-                        s.getNum()) == 1) {
+                        s.getNumber()) == 1) {
                     // 给订单添加新商品
                     finalOrder.add(s);
                 } else {
@@ -151,15 +151,15 @@ public class UserServer implements User {
      * 失败返回-1*/
     public int updateStoreNumById(String id, int num) {
         // 通过key取redis中的商品
-        Store store = sellOutRepository.findStoreById(id);
+        TabStore store = sellOutRepository.findStoreById(id);
         // 如果存在将尝试修改
         if (store != null) {
-            if(store.getNum()-num < 0){
+            if(store.getNumber()-num < 0){
                 logger.debug("库存不足，回档");
                 return 0;
             }else {
                 // 更新数量
-                store.setNum(store.getNum()-num);
+                store.setNumber(store.getNumber()-num);
                 // update store
                 sellOutRepository.putStore(store);
                 return 1;
@@ -177,10 +177,10 @@ public class UserServer implements User {
     private Double taximeter(Order order) {
         double amount = 0.0;
         // 核算订单中商品的价值
-        for (Store s :
+        for (TabStore s :
                 order.getStoreList()) {
-            Store a = sellOutRepository.findStoreById(String.valueOf(s.getId()));
-            amount += (a.getPrice() * s.getNum() * a.getDiscount());
+            TabStore a = sellOutRepository.findStoreById(String.valueOf(s.getId()));
+            amount += (a.getPrice() * s.getNumber() * a.getDiscount());
         }
         // 如果有优惠码，检查code合法性，并取出提前定义的优惠方案
         if(order.getCode() != null){

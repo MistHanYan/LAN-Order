@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class QR {
 
     private final String tabFilePath = "/home/mist/pictures/tabs/";
-    private final String maQRFilePath = "/home/mist/pictures/maQR/";
+    private final String maQRFilePath = "/home/mist/pictures/maQRs/";
     private BufferedImage getQRCode(String data) {
         int size = 250; // 二维码图片的尺寸（宽度和高度）
 

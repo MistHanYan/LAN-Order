@@ -1,7 +1,6 @@
 package com.example.lanorderafterend.controller.admin;
 
 import com.example.lanorderafterend.entity.Result;
-import com.example.lanorderafterend.entity.Store;
 import com.example.lanorderafterend.service.Admin;
 import com.example.lanorderafterend.service.impl.AdminServer;
 import com.example.lanorderafterend.util.mybatis.TabStore;
@@ -9,6 +8,7 @@ import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,9 +20,16 @@ public class StoreController {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminServer.class);
     @PostMapping("/admin/store/insert")
-    public Result insert(@RequestBody TabStore tabStore){
+    public Result insert(@RequestParam("name") String name
+            , @RequestParam("sort") String sort
+            , @RequestParam("price") Double price
+            , @RequestParam("img") MultipartFile img){
+        TabStore tabStore = new TabStore();
+        tabStore.setSort(sort);
+        tabStore.setPrice(price);
+        tabStore.setName(name);
         logger.debug("input store:{}",tabStore);
-        return admin.addStore(tabStore) > 0
+        return admin.addStore(tabStore,img.getOriginalFilename(), img) > 0
                 ? Result.success(1,"Inset is succeed")
                 : Result.error(-1,"Insert is error");
     }
@@ -46,13 +53,13 @@ public class StoreController {
                 : Result.error(-1,"Delete is succeed");
     }
 
-    @GetMapping("/admin/store/tab")
+    @GetMapping("/admin/store/show")
         public Result getStoreInTab(){
             return Result.success(1,"succeed",admin.getStoreList());
     }
 
     @PostMapping("/admin/store/sellout")
-    public Result sellOutStore(@RequestBody List<Store> storeList){
+    public Result sellOutStore(@RequestBody List<TabStore> storeList){
         logger.debug("storeList : {}",storeList.get(1));
         return Result.success(admin.sellout(storeList),"sellout msg");
     }

@@ -1,15 +1,15 @@
 package com.example.lanorderafterend.util.redis;
 
-import com.example.lanorderafterend.entity.Store;
+import com.example.lanorderafterend.util.mybatis.TabStore;
 
 import java.util.Map;
 
 public interface SellOutRepository {
-    void putStore(Store store);
+    void putStore(TabStore store);
 
     Map<String , Object> findAllStore();
 
-    Store findStoreById(String id);
+    TabStore findStoreById(String id);
 
     void deleteStoreData();
 }

@@ -1,6 +1,6 @@
 package com.example.lanorderafterend.util.redis.impl;
 
-import com.example.lanorderafterend.entity.Store;
+import com.example.lanorderafterend.util.mybatis.TabStore;
 import com.example.lanorderafterend.util.redis.SellOutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
@@ -22,7 +22,7 @@ public class SellOutRepositoryImpl implements SellOutRepository {
     }
 
     @Override
-    public void putStore(Store store) {
+    public void putStore(TabStore store) {
         String storeId = String.valueOf(store.getId());
         redisTemplate.opsForHash().put(HASH_KEY , storeId , store);
     }
@@ -34,8 +34,8 @@ public class SellOutRepositoryImpl implements SellOutRepository {
     }
 
     @Override
-    public Store findStoreById(String id) {
-        return (Store) redisTemplate.opsForHash().get(HASH_KEY , id);
+    public TabStore findStoreById(String id) {
+        return (TabStore) redisTemplate.opsForHash().get(HASH_KEY , id);
     }
 
     @Override

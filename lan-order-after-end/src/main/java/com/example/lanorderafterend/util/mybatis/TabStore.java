@@ -29,6 +29,9 @@ public class TabStore {
     @TableField(value = "number")
     private int number;
 
+    @TableField(value = "img_path")
+    private String imgPath;
+
     @TableField(value = "created_date")
     private LocalDateTime createdDate;
 

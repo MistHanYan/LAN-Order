@@ -1,5 +1,6 @@
 package com.example.lanorderafterend.entity;
 
+import com.example.lanorderafterend.util.mybatis.TabStore;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,7 +15,7 @@ public class Order implements Serializable {
     /**
      * 商品列表，下单的具体商品
      */
-    private List<Store> storeList;
+    private List<TabStore> storeList;
 
     private String type;
 

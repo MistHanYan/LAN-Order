@@ -3,10 +3,10 @@ package com.example.lanorderafterend.service;
 import com.example.lanorderafterend.entity.DeskMsg;
 import com.example.lanorderafterend.entity.Marketing;
 import com.example.lanorderafterend.entity.Order;
-import com.example.lanorderafterend.entity.Store;
 import com.example.lanorderafterend.util.mybatis.TabRecord;
 import com.example.lanorderafterend.util.mybatis.TabStore;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,7 +21,7 @@ public interface Admin {
     int isEnd(int num) throws JsonProcessingException;
 
 
-    int addStore(TabStore tabStore);
+    int addStore(TabStore tabStore , String imgName , MultipartFile img);
 
     int updateStoreById(TabStore tabStore);
 
@@ -31,7 +31,7 @@ public interface Admin {
 
     List<TabStore> getStoreList();
 
-    int sellout(List<Store> storeList);
+    int sellout(List<TabStore> storeList);
 
     Map<String,Object> getOnSalesStore();
 
