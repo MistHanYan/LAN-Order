@@ -4,14 +4,10 @@ services:
   db-mysql:
     image: lan-order-mysql-1.1.1v
     container_name: lan-order-mysql
-    ports:
-      - "3310:3306"
 
   db-redis:
     image: lan-order-redis
     container_name: lan-order-temporary
-    ports:
-      - "6380:6379"
 
   service-app:
     image: lan-order-after-end-1.0.1v
