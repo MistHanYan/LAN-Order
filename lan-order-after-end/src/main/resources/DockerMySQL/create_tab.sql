@@ -57,6 +57,7 @@ create table tb_store
     number       int            null,
     updated_date datetime       null,
     sort         varchar(255)   null,
+    img_path         varchar(255)   null,
     created_date datetime       null
 );
 
