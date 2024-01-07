@@ -3,6 +3,7 @@ package com.example.lanorderafterend.service;
 import com.example.lanorderafterend.entity.DeskMsg;
 import com.example.lanorderafterend.entity.Marketing;
 import com.example.lanorderafterend.entity.Order;
+import com.example.lanorderafterend.entity.UserLoginMsg;
 import com.example.lanorderafterend.util.mybatis.TabRecord;
 import com.example.lanorderafterend.util.mybatis.TabStore;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface Admin {
+
+    String login(UserLoginMsg userLoginMsg);
 
     void updateOrderByTabNum(Order order);
 

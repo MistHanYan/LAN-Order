@@ -1,7 +1,5 @@
 package com.example.lanorderafterend.util.tools;
 
-import com.example.lanorderafterend.entity.Marketing;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -15,14 +13,14 @@ public class JwtCfg {
 
     //private static final Logger logger = LoggerFactory.getLogger(GetByJWT.class);
 
-    public String discountToken(Marketing discountCode, int time) {
+    public String discountToken(String username, int time) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 24L *3600*1000*time);
 
         SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
         // 添加自定义的声明（可选）
         HashMap<String, Object> claims = new HashMap<>();
-        claims.put("type",discountCode.getType());
+        claims.put("username",username);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -31,7 +29,7 @@ public class JwtCfg {
                 .compact();
     }
 
-    public Claims extractSubject(String token) {
+    /*public Claims extractSubject(String token) {
         SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
         return Jwts.parserBuilder()
@@ -39,7 +37,7 @@ public class JwtCfg {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-    }
+    }*/
 
     public boolean checkJwtTimed(String token){
         SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());

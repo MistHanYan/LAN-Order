@@ -2,23 +2,18 @@ package com.example.lanorderafterend.util.tools.websocket;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 @Configuration
-@EnableWebSocket
-public class WebSocketCfg implements WebSocketConfigurer {
-
-    @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new PushOrder(), "login://localhost:8080/login")
-                .setAllowedOrigins("*");
-    }
-
+public class WebSocketCfg{
     @Bean
-    public PushOrder myWebSocketHandler() {
-        return new PushOrder();
+    public ServerEndpointExporter serverEndpointExporter() {
+        ServerEndpointExporter exporter = new ServerEndpointExporter();
+
+        // 手动注册 WebSocket 端点
+        exporter.setAnnotatedEndpointClasses(PushOrder.class);
+
+        return exporter;
     }
 
 }

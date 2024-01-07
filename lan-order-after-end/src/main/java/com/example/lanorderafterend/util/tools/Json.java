@@ -10,4 +10,8 @@ public class Json {
     public<T> String toJson(T object) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(object);
     }
+
+    /*public UserLoginMsg jsonToLoginMsg(String json) throws JsonProcessingException {
+        return new ObjectMapper().readValue(json, UserLoginMsg.class);
+    }*/
 }

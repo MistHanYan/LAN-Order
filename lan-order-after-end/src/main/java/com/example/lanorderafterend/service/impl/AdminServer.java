@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.lanorderafterend.entity.DeskMsg;
 import com.example.lanorderafterend.entity.Marketing;
 import com.example.lanorderafterend.entity.Order;
+import com.example.lanorderafterend.entity.UserLoginMsg;
 import com.example.lanorderafterend.service.Admin;
 import com.example.lanorderafterend.util.mybatis.TabMarketingCode;
 import com.example.lanorderafterend.util.mybatis.TabOrder;
@@ -16,6 +17,7 @@ import com.example.lanorderafterend.util.mybatis.mapper.StoreMapper;
 import com.example.lanorderafterend.util.redis.SellOutRepository;
 import com.example.lanorderafterend.util.redis.TemporarilyOrder;
 import com.example.lanorderafterend.util.tools.Json;
+import com.example.lanorderafterend.util.tools.JwtCfg;
 import com.example.lanorderafterend.util.tools.QR;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.annotation.Resource;
@@ -51,6 +53,10 @@ public class AdminServer implements Admin {
     @Resource
     private SellOutRepository sellOutRepository;
 
+    private static final String USER_NUM = "mist";
+
+    private static final String PASSWD = "123456";
+
     private static final Logger logger = LoggerFactory.getLogger(AdminServer.class);
 
 
@@ -62,6 +68,16 @@ public class AdminServer implements Admin {
         Map<String,Object> orders = temporarilyOrder.findAllOrder();
         logger.debug("orders : {}",new Json().toJson(orders));
         return orders;
+    }
+
+    @Override
+    public String login(UserLoginMsg userLoginMsg) {
+
+        if (userLoginMsg.getUser_num().equals(USER_NUM) && userLoginMsg.getPasswd().equals(PASSWD)) {
+            return new JwtCfg().discountToken(userLoginMsg.getUser_num(), 30);
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -164,7 +180,8 @@ public class AdminServer implements Admin {
     public int sellout(List<TabStore> storeList) {
         // 更新前删除redis中的所有商品
         sellOutRepository.deleteStoreData();
-        logger.debug("sellOut init");
+        logger.info("sellOut init");
+        logger.debug("stores of sell out:{}",storeList);
         // 添加到redis
         for (TabStore store : storeList){
             sellOutRepository.putStore(store);

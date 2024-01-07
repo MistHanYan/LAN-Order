@@ -6,11 +6,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @TableName("tb_store")
-public class TabStore {
+public class TabStore implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private int id;
 
@@ -26,6 +27,7 @@ public class TabStore {
     @TableField(value = "discount")
     private double discount;
 
+    // 销量
     @TableField(value = "number")
     private int number;
 
@@ -37,4 +39,8 @@ public class TabStore {
 
     @TableField(value = "updated_date")
     private LocalDateTime updateDate;
+
+    // 在售数量
+    @TableField(exist = false)
+    private int num;
 }
