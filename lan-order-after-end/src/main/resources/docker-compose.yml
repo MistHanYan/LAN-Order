@@ -12,5 +12,9 @@ services:
   service-app:
     image: lan-order-after-end
     container_name: lan-order-after-end
+    volumes:
+      - /home/mist/pictures/stores:/home/mist/pictures/stores
+      - /home/mist/pictures/tabs:/home/mist/pictures/tabs
+      - /home/mist/pictures/maQRs:/home/mist/pictures/maQRs
     ports:
       - "8080:8080"
