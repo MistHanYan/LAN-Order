@@ -19,19 +19,29 @@ public class StoreController {
     Admin admin;
 
     private static final Logger logger = LoggerFactory.getLogger(AdminServer.class);
+
     @PostMapping("/admin/store/insert")
     public Result insert(@RequestParam("name") String name
             , @RequestParam("sort") String sort
             , @RequestParam("price") Double price
-            , @RequestParam("img") MultipartFile img){
+            , @RequestParam("img") MultipartFile img) {
         TabStore tabStore = new TabStore();
         tabStore.setSort(sort);
         tabStore.setPrice(price);
         tabStore.setName(name);
-        logger.debug("input store:{}",tabStore);
-        return admin.addStore(tabStore,img.getOriginalFilename(), img) > 0
-                ? Result.success(1,"Inset is succeed")
-                : Result.error(-1,"Insert is error");
+        logger.debug("input store:{}", tabStore);
+
+        switch (admin.addStore(tabStore, img.getOriginalFilename(), img)) {
+            case 1 -> {
+                logger.info("成功添加商品{}", tabStore);
+                return Result.success(1, "Inset is succeed");
+            }
+            case -1 -> {
+                return Result.error(-1, "Insert is error");
+            }
+            default -> throw new IllegalStateException("Unexpected value: "
+                    + admin.addStore(tabStore, img.getOriginalFilename(), img));
+        }
     }
 
     @PatchMapping("/admin/store/update")

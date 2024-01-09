@@ -74,8 +74,10 @@ public class AdminServer implements Admin {
     public String login(UserLoginMsg userLoginMsg) {
 
         if (userLoginMsg.getUser_num().equals(USER_NUM) && userLoginMsg.getPasswd().equals(PASSWD)) {
+            logger.info("用户：{}，登录成功",userLoginMsg.getUser_num());
             return new JwtCfg().discountToken(userLoginMsg.getUser_num(), 30);
         } else {
+            logger.info("用户：{}，登录失败",userLoginMsg.getUser_num());
             return "";
         }
     }
@@ -95,6 +97,7 @@ public class AdminServer implements Admin {
     @Override
     public int isEnd(int num) throws JsonProcessingException {
         String id = String.valueOf(num);
+        logger.info("{}号桌申请结束订单",num);
         Order order = temporarilyOrder.findOrderById(id);
         // 通过key删除redis中的订单
         temporarilyOrder.deleteOrderById(id);
@@ -105,6 +108,7 @@ public class AdminServer implements Admin {
         tabOrder.setAmount(order.getTotal());
         tabOrder.setStoreList(new Json().toJson(order));
         recordSalas(order);
+        logger.info("{}号桌结束订单成功，订单数据以保存至数据库",num);
         return orderMapper.insert(tabOrder);
     }
 
@@ -112,11 +116,13 @@ public class AdminServer implements Admin {
      * 更新数据库中商品销量
      * */
     private void recordSalas(Order order){
+        logger.info("{}号桌正在结束订单，正在更新数据库商品销量。。。",order.getTabNum());
         for (TabStore s : order.getStoreList()){
             TabStore stored = storeMapper.selectById(s.getId());
             stored.setNumber(stored.getNumber()+s.getNumber());
             storeMapper.updateById(stored);
         }
+        logger.info("商品销量更新完毕");
     }
 
     /**
@@ -137,6 +143,7 @@ public class AdminServer implements Admin {
         tabStore.setNumber(0);
         // 设置图片地址
         tabStore.setImgPath(imgSavedPath);
+        logger.info("正在向数据库添加商品：{}",tabStore);
         return storeMapper.insert(tabStore);
     }
 

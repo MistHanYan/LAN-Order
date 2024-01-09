@@ -3,7 +3,6 @@ package com.example.lanorderafterend.controller.admin;
 import com.example.lanorderafterend.entity.Result;
 import com.example.lanorderafterend.service.Admin;
 import com.example.lanorderafterend.util.mybatis.TabRecord;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +12,7 @@ public class RecordController {
     @Resource
     private Admin admin;
     @GetMapping("/admin/record/show")
-    public Result showList() throws JsonProcessingException {
+    public Result showList() {
         return Result.success(1,"record list",admin.getRecordList());
     }
 
@@ -25,14 +24,14 @@ public class RecordController {
     }
 
     @PatchMapping("/admin/record/update")
-    public Result update(@RequestBody TabRecord tabRecord) throws JsonProcessingException {
+    public Result update(@RequestBody TabRecord tabRecord) {
         return admin.updateRecordById(tabRecord) > 0
                 ? Result.success(1,"succeed")
                 : Result.error(-1,"error");
     }
 
     @PostMapping("/admin/record/add")
-    public Result add(@RequestBody TabRecord tabRecord) throws JsonProcessingException {
+    public Result add(@RequestBody TabRecord tabRecord) {
         return admin.addRecord(tabRecord) > 0
                 ? Result.success(1,"succeed")
                 : Result.error(0,"error");

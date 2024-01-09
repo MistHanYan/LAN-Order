@@ -2,6 +2,8 @@ package com.example.lanorderafterend.util.tools;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -11,7 +13,7 @@ public class JwtCfg {
     private static final String SECRET_KEY = "MistIsZhangYang1MistIsZhangYang1"; // 用于签名的密钥，请根据实际需求进行修改
 
 
-    //private static final Logger logger = LoggerFactory.getLogger(GetByJWT.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtCfg.class);
 
     public String discountToken(String username, int time) {
         Date now = new Date();
@@ -48,6 +50,7 @@ public class JwtCfg {
                     .parseClaimsJws(token)
                     .getBody();
             //logger.debug("Jwt is success for to check time");
+            logger.info("This is a successful check for token");
             return true;
         } catch (Exception ex){
             return false;
