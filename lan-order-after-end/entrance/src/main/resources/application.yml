@@ -1,0 +1,41 @@
+spring:
+  # mysql 配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # url: jdbc:mysql://47.109.47.32:3306/lan_order_data
+    # url: jdbc:mysql://47.109.47.32:3307/lan_order_data
+    # url: jdbc:mysql://localhost:3307/lan_order_data
+    url: jdbc:mysql://db-mysql:3306/lan_order_data
+    username: root
+    password: "077617"
+
+  # redis配置
+  data:
+    redis:
+      # host: 47.109.47.32
+      host: db-redis
+      # host: localhost
+      port: 6379
+      database: 0
+
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
+
+  profiles:
+    active: dao,service,common,web-socket,api
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.com.lanorder: DEBUG
+
+
+mybatis-plus:
+  type-aliases-package: com.lanorder.dao.mybatis.entity
+  configuration:
+    map-underscore-to-camel-case: true
