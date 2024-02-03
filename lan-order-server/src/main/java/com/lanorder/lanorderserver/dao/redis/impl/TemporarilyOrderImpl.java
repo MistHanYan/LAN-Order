@@ -66,9 +66,13 @@ public class TemporarilyOrderImpl implements TemporarilyOrder {
         Object object = redisTemplate.opsForHash().get(STORE_HASH_KEY,id);
         StoreList storeList = (StoreList) object;
         if (storeList != null) {
-            return storeList.getStoreList();
+            if(storeList.getStoreList().size() != 0){
+                return storeList.getStoreList();
+            }else {
+                return null;
+            }
         }else {
-            throw new RuntimeException("list to out exception");
+            return null;
         }
     }
 

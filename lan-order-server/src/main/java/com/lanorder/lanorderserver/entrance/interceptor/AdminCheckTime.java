@@ -26,7 +26,6 @@ public class AdminCheckTime implements HandlerInterceptor {
         }else {
             String token = request.getHeader("Authorization");
             if(token != null && JwtCfg.checkJwtTimed(token)){
-                logger.info("the token is overtime or invalid");
                 return true;
             }
             response.getWriter().write(ErrorEnum.NO_PRIVILEGE.toString());
