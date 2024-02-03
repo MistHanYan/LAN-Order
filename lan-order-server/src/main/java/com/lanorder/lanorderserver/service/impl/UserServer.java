@@ -17,7 +17,6 @@ import lombok.Synchronized;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,32 +61,27 @@ public class UserServer implements User {
             // 查找redis中是否存在这笔订单
             if (temporarilyOrder.findOrderById(
                     String.valueOf(order.getTabNum())) == null) {
-
                 // 更新在售商品库存
                 if (updateSalesNum(order.getStoreList())
                         .equals(ErrorEnum.SUCCESS)) {
                     // 核算商品总价
                     order.setAmount(taximeter(order));
-                    order.setCreatedDate(Timestamp.valueOf(LocalDateTime.now()));
+                    order.setCreatedDate(LocalDateTime.now());
                     temporarilyOrder.putOrder(order);
-
+                    temporarilyOrder.putStoreList(
+                            String.valueOf(order.getTabNum()),order.getStoreList());
                     // 给前端发消息有新订单
                     pushOrderToAdmin(newOrder);
                     return temporarilyOrder.findOrderById(order.getTabNum().toString());
-                }
-                throw new RuntimeException();
+                }throw new RuntimeException();
             } else {
                 if (goAdd(order)) {
                     // 给前端发消息有新订单
                     pushOrderToAdmin(addOrder);
                     return temporarilyOrder.findOrderById(order.getTabNum().toString());
-                } else {
-                    throw new RuntimeException();
-                }
+                } else {throw new RuntimeException();}
             }
-        }catch (Exception e) {
-            return null;
-        }
+        }catch (Exception e) {return null;}
     }
 
     private TabStore isEmptyStoreInDatabase(TabStore store){
@@ -133,12 +127,12 @@ public class UserServer implements User {
     /**
      * - 追加订单
      * - 避免超卖，只允许单线程进入
+     * 获取的商品列表
      */
     @Synchronized
     private boolean goAdd(TabOrder order) {
         List<TabStore> finalOrder = updateOrder(
-                temporarilyOrder.findOrderById(
-                        String.valueOf(order.getTabNum())).getStoreList()
+                temporarilyOrder.findStoreListById(String.valueOf(order.getTabNum()))
                 , order.getStoreList());
         if (finalOrder != null){
             // 更新订单中的商品
@@ -146,12 +140,15 @@ public class UserServer implements User {
             // 核算总价
             order.setAmount(taximeter(order));
             // 更新订单
-            temporarilyOrder.putOrder(order);
+            temporarilyOrder.putStoreList(String.valueOf(order.getTabNum()),finalOrder);
             return true;
         }
         return false;
     }
-    
+
+
+    /**
+     * 更新商品*/
     private List<TabStore> updateOrder(List<TabStore> storeListed
             , List<TabStore> newStoreList) {
         // 用来保存新订单和原始订单重组后的订单

@@ -8,6 +8,8 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -17,10 +19,10 @@ public class TabOrder implements Serializable {
     private Integer id;
 
     @TableField("created_date")
-    private Timestamp createdDate;
+    private LocalDateTime createdDate;
 
     @TableField("updated_date")
-    private Timestamp updatedDate;
+    private LocalDateTime updatedDate;
 
     @TableField("store_list")
     private String storeListJson;

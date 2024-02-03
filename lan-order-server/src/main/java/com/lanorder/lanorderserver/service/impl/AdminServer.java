@@ -56,14 +56,6 @@ public class AdminServer implements Admin {
     private static final String USER_NUM = "mist";
     private static final String PASSWD = "123456";
 
-    /**
-     * 获取所有当前的订单信息
-     * */
-    @Override
-    public Map<String, Object> getOrderList() {
-        return temporarilyOrder.findAllOrder();
-    }
-
     @Override
     public String login(UserLoginMsg userLoginMsg) {
         if (userLoginMsg.getUser_num().equals(USER_NUM)
@@ -89,6 +81,24 @@ public class AdminServer implements Admin {
     }
 
     /**
+     * 获取所有当前的订单信息
+     * */
+    @Override
+    public List<TabOrder> getOrderListAll() {
+        return temporarilyOrder.findAllOrder();
+    }
+
+    @Override
+    public TabOrder getOrderByTabNum(String TabNum) {
+        return temporarilyOrder.findOrderById(TabNum);
+    }
+
+    @Override
+    public List<TabStore> getStoreList(String tabNum) {
+        return temporarilyOrder.findStoreListById(tabNum);
+    }
+
+    /**
      * 结束订单
      * 通过传过来的座号
      * */
@@ -103,7 +113,7 @@ public class AdminServer implements Admin {
             recordSalas(tabOrder.getStoreList());
             // 通过key删除redis中的订单
             temporarilyOrder.deleteOrderById(id);
-            tabOrder.setUpdatedDate(Timestamp.valueOf(LocalDateTime.now()));
+            tabOrder.setUpdatedDate(LocalDateTime.now());
             if(orderMapper.insert(tabOrder) > 0){
                 return tabOrder;
             }else {

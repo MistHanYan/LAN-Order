@@ -21,7 +21,15 @@ public interface Admin {
 
     TabOrder updateOrderByTabNum(TabOrder order);
 
-    Map<String,Object> getOrderList() throws JsonProcessingException;
+
+    // Get to list for all order
+    List<TabOrder> getOrderListAll();
+
+    // Get to order by table number
+    TabOrder getOrderByTabNum(String TabNum);
+
+    // Get order list for limit
+    List<TabStore> getStoreList(String tabNum);
 
     TabOrder isEnd(Integer num);
 
