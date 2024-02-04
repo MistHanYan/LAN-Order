@@ -1,7 +1,6 @@
 package com.lanorder.lanorderserver.web.admin;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lanorder.lanorderserver.common.entity.pojo.Tabs;
 import com.lanorder.lanorderserver.common.entity.request.receive.DeskMsg;
 import com.lanorder.lanorderserver.common.log.MethodLog;
@@ -29,7 +28,7 @@ public class ManageQRController {
 
     @MethodLog
     @DeleteMapping("/manage_qr/delete")
-    public Result<Object> delete(@RequestParam Integer id) throws JsonProcessingException {
+    public Result<Object> delete(@RequestParam Integer id){
         return Result.result(admin.deleteTabByPath(id),null);
     }
 

@@ -1,6 +1,5 @@
 package com.lanorder.lanorderserver.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lanorder.lanorderserver.common.entity.pojo.TabOrder;
 import com.lanorder.lanorderserver.common.entity.pojo.TabRecord;
 import com.lanorder.lanorderserver.common.entity.pojo.TabStore;
@@ -65,7 +64,7 @@ public interface Admin {
 
     List<Tabs> getTabList();
 
-    ErrorEnum deleteTabByPath(Integer id) throws JsonProcessingException;
+    ErrorEnum deleteTabByPath(Integer id);
 
     ErrorEnum addTab(DeskMsg deskMsg) throws IOException;
 }
